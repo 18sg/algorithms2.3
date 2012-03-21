@@ -38,7 +38,7 @@ def calculate_fs(y, t):
 	# T is probably a Fraction when passed in.
 	t = float(t)
 	
-	beta_t = beta_0 * (1 + cos(omega * t))
+	beta_t = beta_0 * (1 + cos(omega * t * pi))
 	
 	r = array([ [mu - beta_t * y[0,0] * y[2,0]]
 	          , [beta_t * y[0,0] * y[2,0] - (y[1,0] / _lambda)]
@@ -111,7 +111,7 @@ def run(initial_y, h, n_steps):
 	ts = [i * h for i in range(n_steps)]
 	ys, fs = solve_ode(initials, h, ts, method_2)
 	
-	return ts, ys
+	return ts, ys, fs
 
 def run_euler(initial_y, h, n_steps):
 	"""Find some solutions usin euler's method (for testing).
@@ -119,33 +119,39 @@ def run_euler(initial_y, h, n_steps):
 	initial = (initial_y, calculate_fs(initial_y, 0.0))
 	ts = [i * h for i in range(n_steps)]
 	ys, fs = solve_ode(initial, h, ts, euler)
-	return ts, ys
+	return ts, ys, fs
 
 if __name__ == "__main__":
 	initial_y = array([[0.15], [0.6], [0.1]])
 	c = csv.DictWriter(open("out.csv", "w"),
-	                   "method h t y1 y2 y3".split())
+	                   "method h t y1 y2 y3 f1 f2 f3".split())
 	c.writeheader()
 	
-	for h in [Fraction(1, 10), Fraction(1, 100), Fraction(1, 300)]:
-		ts, ys = run(initial_y, h, int(1 / h))
-		for (t, y1, y2, y3) in zip(ts, *ys):
+	for h in [Fraction(1, 10), Fraction(1, 100), Fraction(1, 1000)]:
+		ts, ys, fs = run(initial_y, h, int(1 / h))
+		for (t, y1, y2, y3, f1, f2, f3) in zip(ts, *(list(ys) + list(fs))):
 			c.writerow(dict( h=str(h)
 			               , t=float(t)
 			               , y1=y1
 			               , y2=y2
 			               , y3=y3
+			               , f1=f1
+			               , f2=f2
+			               , f3=f3
 			               , method="2"
 			               )
 			          )
 	
 	for h in [Fraction(1, 10) ** 2, Fraction(1, 100) ** 2]:
-		ts, ys = run_euler(initial_y, h, int(0.3 / h))
-		for (t, y1, y2, y3) in zip(ts, *ys):
+		ts, ys, fs = run_euler(initial_y, h, int(0.3 / h))
+		for (t, y1, y2, y3, f1, f2, f3) in zip(ts, *(list(ys) + list(fs))):
 			c.writerow(dict( h=str(h)
 			               , t=float(t)
 			               , y1=y1
 			               , y2=y2
 			               , y3=y3
+			               , f1=f1
+			               , f2=f2
+			               , f3=f3
 			               , method="euler"
 			               ))
