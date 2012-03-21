@@ -1,6 +1,5 @@
 #!/usr/bin/env python2
 from __future__ import division
-import numpypy
 import numpy as np
 from numpy import array
 from math import *
