@@ -60,50 +60,66 @@ def step((ys, fs), h, t, method):
 	return ( np.hstack((ys[..., 1:], new_y))
 	       , np.hstack((fs[..., 1:], new_f))
 	       )
-	
+
 
 def solve_ode(initial, h, ts, method):
-	t = Fraction()
-	i = 0
-	
+	"""Solve an system of ODEs for each t in 'ts', starting with initial values
+	'initial', a step size of 'h', and using method 'method'.
+	"""
+	# The previous m values for y and f.
 	current = initial
+	# The t of the first pair in curent.
+	t = Fraction()
+	
+	ts = sorted(ts)
+	
+	# The output, one for each ts.
 	ys = []
 	fs = []
-	ts = ts[:]
 	
 	while ts:
-		current_timesteps = [j * h for j in range(i, i+method.k)]
+		# The t for each item in current.
+		current_timesteps = [t + j * h for j in range(method.k)]
+		
 		while ts and ts[0] in current_timesteps:
-			ts_idx = [int((ts[0] - t) / h)]
-			ys.append(current[0][..., ts_idx])
-			fs.append(current[1][..., ts_idx])
+			# We've found one; compute it's index and add it to the output.
+			ts_idx = int((ts[0] - t) / h)
+			ys.append(current[0][..., [ts_idx]])
+			fs.append(current[1][..., [ts_idx]])
 			ts.pop(0)
+		
+		# Step
 		next_t = current_timesteps[-1] + h
 		current = step(current, h, next_t, method)
 		
 		t += h
-		i += 1
 	
 	return (np.hstack(ys), np.hstack(fs))
 
 
 def run(initial_y, h, n_steps):
+	"""Find some solutions using method2 bootstrapped with euler's method.
+	"""
 	# Actual initial values.
 	initial = (initial_y, calculate_fs(initial_y, 0.0))
 	
-	# Run 
+	# Bootstrap with euler's method.
 	ts = [i * h for i in range(method_2.k)]
 	initials = solve_ode(initial, h**2, ts, euler)
+	
+	# Run with method 2.
 	ts = [i * h for i in range(n_steps)]
 	ys, fs = solve_ode(initials, h, ts, method_2)
 	
-	return ys
+	return ts, ys
 
-def run_e(initial_y, h, n_steps):
+def run_euler(initial_y, h, n_steps):
+	"""Find some solutions usin euler's method (for testing).
+	"""
 	initial = (initial_y, calculate_fs(initial_y, 0.0))
 	ts = [i * h for i in range(n_steps)]
 	ys, fs = solve_ode(initial, h, ts, euler)
-	return ys
+	return ts, ys
 
 if __name__ == "__main__":
 	initial_y = array([[0.15], [0.6], [0.1]])
@@ -112,10 +128,10 @@ if __name__ == "__main__":
 	c.writeheader()
 	
 	for h in [Fraction(1, 10), Fraction(1, 100), Fraction(1, 300)]:
-		ys = run(initial_y, h, int(1 / h))
-		for (i, (y1, y2, y3)) in enumerate(zip(*ys)):
+		ts, ys = run(initial_y, h, int(1 / h))
+		for (t, y1, y2, y3) in zip(ts, *ys):
 			c.writerow(dict( h=str(h)
-			               , t=float(h * i)
+			               , t=float(t)
 			               , y1=y1
 			               , y2=y2
 			               , y3=y3
@@ -124,10 +140,10 @@ if __name__ == "__main__":
 			          )
 	
 	for h in [Fraction(1, 10) ** 2, Fraction(1, 100) ** 2]:
-		ys = run_e(initial_y, h, int(0.3 / h))
-		for (i, (y1, y2, y3)) in enumerate(zip(*ys)):
+		ts, ys = run_euler(initial_y, h, int(0.3 / h))
+		for (t, y1, y2, y3) in zip(ts, *ys):
 			c.writerow(dict( h=str(h)
-			               , t=float(h * i)
+			               , t=float(t)
 			               , y1=y1
 			               , y2=y2
 			               , y3=y3
