@@ -9,27 +9,44 @@
 \begin{frame}
 	\titlepage
 \end{frame}
-\begin{frame}{Question 1}
 
-$y_{n+3} + (2b - 3)(y_{n+2} - y_{n+1}) - y_n = hb(f_{n+2} + f_{n+1}), b \in \Re$
+\begin{frame}{Question 1: Find values of $b$ for which the method is stable}
+	
+	\vspace{\baselineskip}
+	
+	$y_{n+3} + (2b - 3)(y_{n+2} - y_{n+1}) - y_n = hb(f_{n+2} + f_{n+1}), b \in \Re$
+	
+	\vspace{\baselineskip}
+	
+	\begin{align*}
+		\alpha_3 &= 1 \\
+		\alpha_2 &= 2b - 3 \\
+		\alpha_1 &= 3 - 2b \\
+		\alpha_0 &= -1
+	\end{align*}
+\end{frame}
 
-Method stability determined by roots of first characteristic polynomial of magnitude $\le 1$ with values of b.
+\begin{frame}{Question 1: Solve Characteristic Polynomial}
+	
+	\vspace{\baselineskip}
+	
+	$\rho(\xi) = \xi^3+\left(2\,b-3\right)\,\xi^2+\left(3-2\,b\right)\,\xi-1$
+	
+	\vspace{\baselineskip}
+	
+	\begin{align*}
+		\xi&=-\sqrt{b^2-2\,b}-b+1 \\
+		\xi&=\sqrt{b^2-2\,b}-b+1 \\
+		\xi&=1
+	\end{align*}
+\end{frame}
 
-${\it y_{n+3}}+\left(2\,b-3\right)\,{\it y_{n+2}}+\left(3-2\,b\right) {\it y_{n+1}}-{\it y_n}$
-
-Giving alphas: $\alpha_3 = 1$ $\alpha_2 = 2b - 3$ $\alpha_1 = 3 - 2b$ $\alpha_0 = -1$
-
-Which gives us the first characteristic polynomial:
-
-$\rho(\xi) = \xi^3+\left(2\,b-3\right)\,\xi^2+\left(3-2\,b\right)\,\xi-1$
-
-Factorizing gives: $\left(\xi-1\right)\,\left(\xi^2+2\,b\,\xi-2\,\xi+1\right)$
-
-Root at $\xi = 1$. Quadratic formula gives the roots:
-
-$\left[ \xi=-\sqrt{b^2-2\,b}-b+1 , \xi=\sqrt{b^2-2\,b}-b+1 , \xi=1 \right]$
-
-The interval of values for the real constant b for which the method is stable is $0 < b < 2$
+\begin{frame}{Question 1: Magnitudes of Roots}
+	\begin{center}
+		\includegraphics[width=\textwidth]{rootMag.png}
+	\end{center}
+	
+	Stable in range $0 < b < 2$ (as $b = 0$ and $b = 2$ are not simple).
 \end{frame}
 
 \begin{frame}{Question 2}
