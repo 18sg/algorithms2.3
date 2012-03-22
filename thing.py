@@ -128,7 +128,7 @@ if __name__ == "__main__":
 	c.writeheader()
 	
 	for h in [Fraction(1, 10), Fraction(1, 100), Fraction(1, 1000)]:
-		ts, ys, fs = run(initial_y, h, int(1 / h))
+		ts, ys, fs = run(initial_y, h, int(1 / h) + 1)
 		for (t, y1, y2, y3, f1, f2, f3) in zip(ts, *(list(ys) + list(fs))):
 			c.writerow(dict( h=str(h)
 			               , t=float(t)
