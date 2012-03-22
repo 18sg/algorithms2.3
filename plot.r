@@ -15,3 +15,11 @@ p <- ggplot(subset(d, method=="2" & h %in% hs & variable %in% vars),
 	theme_bw() + ylab("y") + opts(title="Computed Solutions for Various Mesh Sizes")
 
 ggsave("plot.pdf", width=7, height=5, p)
+
+p <- ggplot(subset(d, method=="2" & h == "1/1000" & variable %in% vars),
+            aes(x=t, y=value, color=variable)) +
+	geom_line() + 
+	ylim(0, 0.1) + xlim(0.6, 1) +
+	theme_bw() + ylab("y") + opts(title="Computed Solutions for h=1/1000")
+
+ggsave("plot-small.pdf", width=7, height=5, p)
